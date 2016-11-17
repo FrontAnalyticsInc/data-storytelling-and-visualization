@@ -1,0 +1,47 @@
+---
+title: "Untitled"
+author: "Alton Alexander"
+date: "November 3, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+set.seed(1234)
+dat <- data.frame(cond = factor(rep(c("A","B"), each=200)), 
+                   rating = c(rnorm(200),rnorm(200, mean=.8)))
+
+# Overlaid histograms
+ggplot(dat, aes(x=rating, fill=cond)) +
+    geom_histogram(binwidth=.5, alpha=.5, position="identity")
+
+# Interleaved histograms
+ggplot(dat, aes(x=rating, fill=cond)) +
+    geom_histogram(binwidth=.5, position="dodge")
+
+# Density plots
+ggplot(dat, aes(x=rating, colour=cond)) + geom_density()
+
+# Density plots with semi-transparent fill
+ggplot(dat, aes(x=rating, fill=cond)) + geom_density(alpha=.3)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
