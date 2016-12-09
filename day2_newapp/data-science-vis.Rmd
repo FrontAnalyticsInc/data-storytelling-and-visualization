@@ -1,0 +1,192 @@
+---
+title: "Introduction to Visualization in R/Shiny"
+author: "Matt Birdsall"
+date: "11/29/2016"
+output: ioslides_presentation
+---
+
+<style>
+  .col2 {
+    columns: 2 200px;         /* number of columns and width in pixels*/
+    -webkit-columns: 2 200px; /* chrome, safari */
+    -moz-columns: 2 200px;    /* firefox */
+  }
+  .col3 {
+    columns: 3 100px;
+    -webkit-columns: 3 100px;
+    -moz-columns: 3 100px;
+  }
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+```
+
+## R Markdown
+
+This is an R Markdown presentation. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document.
+
+## What we will Cover today
+
+- Recap:
+    - Setting up our ***environment***
+    - Creating an `RProject`
+    - Initializing and Creating a Shiny App
+- Quick tips for EDA (explorator data analysis)
+- How to enhance our Shiny app
+
+# RECAP
+## What is an environment? 
+An environment includes:
+
+- software version
+- libraries
+- datasets
+- variables and functions
+- scripts & other files (files that end in `.R` or `.Rmd`)
+
+... essentially everything that is contained within---you guessed it!---the `.Rproj` 
+
+## Why should I control my environment?
+ - easy to set-up again
+ - you'll get better understanding errors that arrise
+     - and you'll know it's not your environment's fault because it's been controlled
+     - if it is your environment's fault troubleshooting can take as long as it took to write the entire anlysis
+     
+## R Project files:
+Used to control your environment.
+The extention is `Rproj`
+
+## New Project:
+`File >> New Project >>Save Current Workspace >> New Project >>Create Directory
+
+1. Create Directory
+    - Creates a new folder to place new files
+2. Choose Existing
+    - Takes the contents of an existing folder and adds those to a new _project_ _environment_.
+
+## New Project:
+`File >> New Project >>Save Current Workspace >> New Project >>Create Directory
+
+`Notice:` if you have files that are open when creating a new R Project, R will ask you if you want to save without telling you that it's going to close everything after! Choose to save, you'll thank R later.
+<br></br>
+<div class="col2">
+![](http://i.giphy.com/alKtECEEJi5ji.gif)
+![](img/thanks.gif)
+</div>
+## Open Project
+What if you have a _'project'_ but it's not an Rproj file? 
+`File >> New Project >> Existing Directory`
+
+Otherwise `File >> Open Project`
+
+## Download the data
+You don't have to download the data directly to computer and then move the csv into your working directory and then read it... go straight to the data.
+If you have a url link to download it, then you can skip the process...
+
+1. Find URL
+2. Trim the URL name to from `'http ___> .csv'` or `.txt`  
+
+```{r}
+utah <- read.csv(file = 
+  'https://opendata.utah.gov/api/views/88ws-42u9/rows.csv',
+  header=TRUE, sep=',', na.strings = "*")
+```
+
+
+## EDA: Quick Look
+There are a couple ways to quickly look at the data.
+```{r eval=FALSE}
+utah[1:10, ]
+```
+This is great because I can see more or less than 5 rows. And I can control the `[row, column]` slice. So I could take some middle rows or the last rows.
+
+## EDA: Quick Look
+There are a couple ways to quickly look at the data.
+```{r eval=TRUE}
+utah[1:10, ]
+```
+
+
+## EDA: Quick Look
+There are a couple ways to quickly look at the data.
+```{r eval = FALSE}
+head(utah, n=3)
+```
+Quick and the standard. And I can still see  `head(utah, n=8)`
+This is great because I can see more or less than 5 rows. I can also use `tail(utah)` and get the last 5 observations, too.
+
+## EDA: Quick Look
+There are a couple ways to quickly look at the data.
+```{r}
+head(utah, n=3)
+```
+
+
+## EDA: Quick Look
+My preferred method.
+```{r ,eval= FALSE}
+str(utah)
+```
+Why?  Because going against the grain is great! No, it's merely because I get 1 column per line, and the number of examples that trail when reading to the right are enought to give you an idea of what's there... but that's not all. `str()` also tells you the type of data that is included in that column.  It gives you a cheat sheet as to how you're going to set up your __data preprocessing__. 
+
+## EDA: Quick Look
+My preferred method.
+```{r ,eval= TRUE}
+str(utah)
+```
+
+
+## EDA: Data Preprocessing
+### Converting a Column to another data type
+
+```{r echo = TRUE}
+typeof(utah$Mean.Annual.Wage[1])
+```
+### `"integer"` means numeric, but...
+if this column is stored in the dataframe as a factor then it will not be usable as is. We will need to alter the column to a numeric storage type.
+
+## EDA: Data Preprocessing
+### Converting a Column to another data type
+
+```{r echo=TRUE}
+utah$Mean.Annual.Wage = as.numeric(as.character(utah$Mean.Annual.Wage))
+typeof(utah$Mean.Annual.Wage[1])
+## Now that it's numeric you can add and do other operations
+```
+### `"double"` means that it's numeric with double percision
+
+
+## Plotting a histogram
+Now that the Mean.Annual.wage is usable we can begin to look at it.
+```{r}
+hist( utah$Mean.Annual.Wage )
+```
+
+## More plotting
+
+### Total Occupations and Mean Annual Wage
+```{r}
+plot(utah$Mean.Annual.Wage, utah$TOT_EMP)
+```
+### Barplots
+```{r}
+#barplot()
+```
+
+
+## Slicing up the DataFrame
+```{r}
+utah2 <-  utah[1:25,]
+```
+## Reordering a DataFrame
+
+```{r}
+utah2 = utah[order(utah$Mean.Annual.Wage, decreasing=TRUE),]
+utah2$Mean.Annual.Wage[1:5]
+```
+
+
+
