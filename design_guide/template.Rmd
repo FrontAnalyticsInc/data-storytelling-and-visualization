@@ -1,0 +1,132 @@
+
+```{r}
+library(ggplot2)
+
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+head(ToothGrowth)
+
+p <- ggplot(ToothGrowth, aes(x=dose, y=len, color=dose)) + geom_boxplot()
+p + theme_light()
+```
+
+
+```{r}
+df2 <- data.frame(supp=rep(c("VC", "OJ"), each=3),
+                  dose=rep(c("D0.5", "D1", "D2"),2),
+                  len=c(6.8, 15, 33, 4.2, 10, 29.5))
+head(df2)
+
+ggplot(data=df2, aes(x=dose, y=len, fill=supp)) +
+  geom_bar(stat="identity", position=position_dodge())+
+  geom_text(aes(label=len), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  scale_fill_brewer(palette="Paired")+
+  theme_minimal()
+```
+
+
+
+```{r}
+
+# Stacked barplot with multiple groups
+p = ggplot(data=df2, aes(x=dose, y=len, fill=supp)) +
+  geom_bar(stat="identity")
+p + theme_light()
+
+```
+
+
+
+```{r}
+
+# Change the colors manually
+p <- ggplot(data=df2, aes(x=dose, y=len, fill=supp)) +
+geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme_light()
+# Use custom colors
+p + scale_fill_manual(values=c('#999999','#E69F00'))
+# Use brewer color palettes
+p + scale_fill_brewer(palette="Blues")
+
+```
+
+
+
+```{r}
+
+df3 <- data_summary(ToothGrowth, varname="len", 
+                    groupnames=c("supp", "dose"))
+# Convert dose to a factor variable
+df3$dose=as.factor(df3$dose)
+head(df3)
+
+# Standard deviation of the mean as error bar
+p <- ggplot(df3, aes(x=dose, y=len, fill=supp)) + 
+   geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=len-sd, ymax=len+sd), width=.2,
+                 position=position_dodge(.9))
+  
+p + scale_fill_brewer(palette="Paired") + theme_minimal()
+
+```
+
+
+```{r}
+
+
+p = ggplot(mtcars, aes(x=wt, y=mpg)) + 
+  geom_point()+
+  geom_smooth()
+p + theme_light()
+
+```
+
+
+```{r}
+set.seed(1234)
+x <- c(rnorm(500, mean = -1), rnorm(500, mean = 1.5))
+y <- c(rnorm(500, mean = 1), rnorm(500, mean = 1.7))
+group <- as.factor(rep(c(1,2), each=500))
+df <- data.frame(x, y, group)
+head(df)
+
+scatterPlot <- ggplot(df,aes(x, y, color=group)) + 
+  geom_point() + 
+  scale_color_manual(values = c('#999999','#E69F00')) + 
+  theme(legend.position=c(0,1), legend.justification=c(0,1))
+scatterPlot
+# Courbe de densité marginale de x (panel du haut)
+xdensity <- ggplot(df, aes(x, fill=group)) + 
+  geom_density(alpha=.5) + 
+  scale_fill_manual(values = c('#999999','#E69F00')) + 
+  theme(legend.position = "none")
+xdensity
+# Courbe de densité marginale de y (panel de droite)
+ydensity <- ggplot(df, aes(y, fill=group)) + 
+  geom_density(alpha=.5) + 
+  scale_fill_manual(values = c('#999999','#E69F00')) + 
+  theme(legend.position = "none")
+ydensity
+
+blankPlot <- ggplot()+geom_blank(aes(1,1))+
+  theme(plot.background = element_blank(), 
+   panel.grid.major = element_blank(),
+   panel.grid.minor = element_blank(), 
+   panel.border = element_blank(),
+   panel.background = element_blank(),
+   axis.title.x = element_blank(),
+   axis.title.y = element_blank(),
+   axis.text.x = element_blank(), 
+   axis.text.y = element_blank(),
+   axis.ticks = element_blank()
+     )
+
+#install.packages("gridExtra")
+library("gridExtra")
+grid.arrange(xdensity, blankPlot, scatterPlot, ydensity, 
+        ncol=2, nrow=2, widths=c(4, 1.4), heights=c(1.4, 4))
+
+
+````
+
+
